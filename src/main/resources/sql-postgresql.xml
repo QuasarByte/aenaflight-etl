@@ -1,0 +1,882 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>JDBC SQL</comment>
+
+    <entry key="aenaFlightRawPagedSelectClause"><![CDATA[SELECT id,
+act_arr_date_time_lt,
+aircraft_name_scheduled,
+arr_apt_name_es,
+arr_apt_code_iata,
+baggage_info,
+carrier_airline_name_en,
+carrier_icao_code,
+carrier_number,
+counter,
+dep_apt_name_es,
+dep_apt_code_iata,
+est_arr_date_time_lt,
+est_dep_date_time_lt,
+flight_airline_name_en,
+flight_airline_name,
+flight_icao_code,
+flight_number,
+flt_leg_seq_no,
+gate_info,
+lounge_info,
+schd_arr_only_date_lt,
+schd_arr_only_time_lt,
+source_data,
+status_info,
+terminal_info,
+arr_terminal_info,
+created_at,
+act_dep_date_time_lt,
+schd_dep_only_date_lt,
+schd_dep_only_time_lt
+]]></entry>
+
+    <entry key="aenaFlightRawPagedFromClause"><![CDATA[
+FROM aenaflight_2017_01
+]]></entry>
+
+    <entry key="aenaFlightRawPagedWhereClause"><![CDATA[
+WHERE id > :alreadyLoadedMaxId
+]]></entry>
+
+    <entry key="aenaFlightRawPagedSortKey">id</entry>
+
+    <entry key="aenaFlightRawLoadSkipped"><![CDATA[SELECT af.id,
+af.act_arr_date_time_lt,
+af.aircraft_name_scheduled,
+af.arr_apt_name_es,
+COALESCE(af.arr_apt_code_iata, '') arr_apt_code_iata,
+af.baggage_info,
+af.carrier_airline_name_en,
+af.carrier_icao_code,
+af.carrier_number,
+af.counter,
+af.dep_apt_name_es,
+af.dep_apt_code_iata,
+af.est_arr_date_time_lt,
+af.est_dep_date_time_lt,
+af.flight_airline_name_en,
+af.flight_airline_name,
+COALESCE(af.flight_icao_code) flight_icao_code,
+COALESCE(af.flight_number, '') flight_number,
+af.flt_leg_seq_no,
+af.gate_info,
+af.lounge_info,
+af.schd_arr_only_date_lt,
+af.schd_arr_only_time_lt,
+af.source_data,
+af.status_info,
+af.terminal_info,
+af.arr_terminal_info,
+af.created_at,
+af.act_dep_date_time_lt,
+COALESCE(af.schd_dep_only_date_lt, (date '1970-01-01')) schd_dep_only_date_lt,
+COALESCE(af.schd_dep_only_time_lt, (time '00:00:00')) schd_dep_only_time_lt
+FROM aenaflight_2017_01 af
+LEFT JOIN aenaflight_2017_01_typed aft on af.id = aft.id
+WHERE af.id < (SELECT MAX(aft1.id)
+               FROM aenaflight_2017_01_typed aft1
+              )
+  AND aft.id IS NULL
+ORDER BY af.id
+LIMIT ?]]>
+    </entry>
+
+    <entry key="aenaFlightRawLoadSkippedExists"><![CDATA[SELECT CASE
+         WHEN EXISTS(SELECT 1
+                     FROM aenaflight_2017_01 af
+                     LEFT JOIN aenaflight_2017_01_typed aft on af.id = aft.id
+                     WHERE af.id < (select MAX(aft1.id) FROM aenaflight_2017_01_typed aft1) and aft.id IS NULL)
+         THEN 1
+         ELSE 0
+       END
+]]>
+    </entry>
+
+    <entry key="insertIntoAenaflightTyped"><![CDATA[INSERT INTO aenaflight_2017_01_typed(
+        id,
+        act_arr_date_time_lt,
+        aircraft_name_scheduled,
+        arr_apt_name_es,
+        arr_apt_code_iata,
+        baggage_info,
+        carrier_airline_name_en,
+        carrier_icao_code,
+        carrier_number,
+        counter,
+        dep_apt_name_es,
+        dep_apt_code_iata,
+        est_arr_date_time_lt,
+        est_dep_date_time_lt,
+        flight_airline_name_en,
+        flight_airline_name,
+        flight_icao_code,
+        flight_number,
+        flt_leg_seq_no,
+        gate_info,
+        lounge_info,
+        schd_arr_only_date_lt,
+        schd_arr_only_time_lt,
+        schd_arr_lt,
+        source_data,
+        status_info,
+        terminal_info,
+        arr_terminal_info,
+        created_at,
+        act_dep_date_time_lt,
+        schd_dep_only_date_lt,
+        schd_dep_only_time_lt,
+        schd_dep_lt
+        )
+        VALUES (
+        :id,
+        :actArrDateTimeLt,
+        :aircraftNameScheduled,
+        :arrAptNameEs,
+        :arrAptCodeIata,
+        :baggageInfo,
+        :carrierAirlineNameEn,
+        :carrierIcaoCode,
+        :carrierNumber,
+        :counter,
+        :depAptNameEs,
+        :depAptCodeIata,
+        :estArrDateTimeLt,
+        :estDepDateTimeLt,
+        :flightAirlineNameEn,
+        :flightAirlineName,
+        :flightIcaoCode,
+        :flightNumber,
+        :fltLegSeqNo,
+        :gateInfo,
+        :loungeInfo,
+        :schdArrOnlyDateLt,
+        :schdArrOnlyTimeLt,
+        :schdArrLt,
+        :sourceData,
+        :statusInfo,
+        :terminalInfo,
+        :arrTerminalInfo,
+        :createdAt,
+        :actDepDateTimeLt,
+        :schdDepOnlyDateLt,
+        :schdDepOnlyTimeLt,
+        :schdDepLt
+        )]]>
+    </entry>
+
+    <entry key="aenaFlightTypedMaxId"><![CDATA[SELECT MAX(id) FROM aenaflight_2017_01_typed]]>
+    </entry>
+
+    <entry key="insertIntoAenaFlightTypedFromAenaFlightRawFullOnDBSide"><![CDATA[INSERT INTO aenaflight_2017_01_typed (
+        id,
+        act_arr_date_time_lt,
+        aircraft_name_scheduled,
+        arr_apt_name_es,
+        arr_apt_code_iata,
+        baggage_info,
+        carrier_airline_name_en,
+        carrier_icao_code,
+        carrier_number,
+        counter,
+        dep_apt_name_es,
+        dep_apt_code_iata,
+        est_arr_date_time_lt,
+        est_dep_date_time_lt,
+        flight_airline_name_en,
+        flight_airline_name,
+        flight_icao_code,
+        flight_number,
+        flt_leg_seq_no,
+        gate_info,
+        lounge_info,
+        schd_arr_only_date_lt,
+        schd_arr_only_time_lt,
+        schd_arr_lt,
+        source_data,
+        status_info,
+        terminal_info,
+        arr_terminal_info,
+        created_at,
+        act_dep_date_time_lt,
+        schd_dep_only_date_lt,
+        schd_dep_only_time_lt,
+        schd_dep_lt
+        )
+SELECT
+	af.id,
+
+	CASE WHEN af.act_arr_date_time_lt ~ '^\s*(?:(?:(?#31 day begin)(?:0[1-9]|[12][0-9]|3[01])/(?:0[13578]|1[02])/\d\d(?#31 day end))|(?:(?#30 days begin)(?:0[1-9]|[12][0-9]|30)/(?:0[469]|11)/\d\d(?#30 days end ))|(?:(?#28 days begin)(?:0[1-9]|[1][0-9]|2[0-8])/02/\d\d(?#28 days end))|(?:(?#29 days begin)29/02/(?:(?:0[48]|[2468][048]|[0][48]|[1379][26])|(?:[02468][048]|[13579][26])00)(?#29 days end)))\s(?#time begin)(?:(?:[01][0-9]|2[0-3]):(?:[0-5][0-9]))(?#time end)\s*$'
+	THEN CAST(to_timestamp(af.act_arr_date_time_lt, 'DD/MM/YY HH24:MI') AS timestamp without time zone)
+	END act_arr_date_time_lt,
+
+    af.aircraft_name_scheduled,
+    af.arr_apt_name_es,
+    COALESCE(af.arr_apt_code_iata, '') arr_apt_code_iata,
+    af.baggage_info,
+    af.carrier_airline_name_en,
+    af.carrier_icao_code,
+    af.carrier_number,
+	af.counter,
+    af.dep_apt_name_es,
+    COALESCE(af.dep_apt_code_iata, '') dep_apt_code_iata,
+
+    CASE WHEN af.est_arr_date_time_lt ~ '^\s*(?:(?:(?#31 day begin)(?:0[1-9]|[12][0-9]|3[01])/(?:0[13578]|1[02])/\d\d(?#31 day end))|(?:(?#30 days begin)(?:0[1-9]|[12][0-9]|30)/(?:0[469]|11)/\d\d(?#30 days end ))|(?:(?#28 days begin)(?:0[1-9]|[1][0-9]|2[0-8])/02/\d\d(?#28 days end))|(?:(?#29 days begin)29/02/(?:(?:0[48]|[2468][048]|[0][48]|[1379][26])|(?:[02468][048]|[13579][26])00)(?#29 days end)))\s(?#time begin)(?:(?:[01][0-9]|2[0-3]):(?:[0-5][0-9]))(?#time end)\s*$'
+	THEN CAST(to_timestamp(af.est_arr_date_time_lt, 'DD/MM/YY HH24:MI') AS timestamp without time zone)
+	END est_arr_date_time_lt,
+
+    CASE WHEN af.est_dep_date_time_lt ~ '^\s*(?:(?:(?#31 day begin)(?:0[1-9]|[12][0-9]|3[01])/(?:0[13578]|1[02])/\d\d(?#31 day end))|(?:(?#30 days begin)(?:0[1-9]|[12][0-9]|30)/(?:0[469]|11)/\d\d(?#30 days end ))|(?:(?#28 days begin)(?:0[1-9]|[1][0-9]|2[0-8])/02/\d\d(?#28 days end))|(?:(?#29 days begin)29/02/(?:(?:0[48]|[2468][048]|[0][48]|[1379][26])|(?:[02468][048]|[13579][26])00)(?#29 days end)))\s(?#time begin)(?:(?:[01][0-9]|2[0-3]):(?:[0-5][0-9]))(?#time end)\s*$'
+	THEN CAST(to_timestamp(af.est_dep_date_time_lt, 'DD/MM/YY HH24:MI') AS timestamp without time zone)
+	END est_dep_date_time_lt,
+
+    af.flight_airline_name_en,
+    af.flight_airline_name,
+    COALESCE(af.flight_icao_code) flight_icao_code,
+    COALESCE(af.flight_number, '') flight_number,
+
+    CASE WHEN af.flt_leg_seq_no ~ '^ *(?:[+-]?0*(?:(?#01)\d{1,9}|(?#02)1\d{9}|(?#03)20\d{8}|(?#04)21[0-3]\d{7}|(?#05)214[0-6]\d{6}|(?#06)2147[0-3]\d{5}|(?#07)21474[0-7]\d{4}|(?#08)214748[0-2]\d{3}|(?#09)2147483[0-5]\d{2}|(?#10)21474836[0-3]\d{1}|(?#11)214748364[0-7])|-0*2147483648) *$'
+	THEN CAST(af.flt_leg_seq_no AS INT)
+	END flt_leg_seq_no,
+
+	af.gate_info,
+    af.lounge_info,
+
+	CASE WHEN af.schd_arr_only_date_lt ~ '^\s*(?:(?:(?#31 day begin)(?:0[1-9]|[12][0-9]|3[01])/(?:0[13578]|1[02])/\d\d(?#31 day end))|(?:(?#30 days begin)(?:0[1-9]|[12][0-9]|30)/(?:0[469]|11)/\d\d(?#30 days end ))|(?:(?#28 days begin)(?:0[1-9]|[1][0-9]|2[0-8])/02/\d\d(?#28 days end))|(?:(?#29 days begin)29/02/(?:(?:0[48]|[2468][048]|[0][48]|[1379][26])|(?:[02468][048]|[13579][26])00)(?#29 days end)))\s*$'
+	THEN CAST(to_timestamp(af.schd_arr_only_date_lt, 'DD/MM/YY') AS DATE)
+	END schd_arr_only_date_lt,
+
+	CASE WHEN af.schd_arr_only_time_lt ~ '^\s*(?#time begin)(?:(?:[01][0-9]|2[0-3]):(?:[0-5][0-9]))(?#time end)\s*$'
+	THEN CAST(to_timestamp(af.schd_arr_only_time_lt, 'HH24:MI') AS TIME)
+	END schd_arr_only_time_lt,
+
+	CASE WHEN af.schd_arr_only_date_lt ~ '^\s*(?:(?:(?#31 day begin)(?:0[1-9]|[12][0-9]|3[01])/(?:0[13578]|1[02])/\d\d(?#31 day end))|(?:(?#30 days begin)(?:0[1-9]|[12][0-9]|30)/(?:0[469]|11)/\d\d(?#30 days end ))|(?:(?#28 days begin)(?:0[1-9]|[1][0-9]|2[0-8])/02/\d\d(?#28 days end))|(?:(?#29 days begin)29/02/(?:(?:0[48]|[2468][048]|[0][48]|[1379][26])|(?:[02468][048]|[13579][26])00)(?#29 days end)))\s*$'
+	      AND af.schd_arr_only_time_lt ~ '^\s*(?#time begin)(?:(?:[01][0-9]|2[0-3]):(?:[0-5][0-9]))(?#time end)\s*$'
+	THEN CAST(to_timestamp(af.schd_arr_only_date_lt, 'DD/MM/YY') AS DATE) + CAST(to_timestamp(af.schd_arr_only_time_lt, 'HH24:MI') AS TIME)
+	END schd_arr_lt,
+
+    af.source_data,
+    af.status_info,
+    af.terminal_info,
+    af.arr_terminal_info,
+    CAST(to_timestamp(af.created_at) AS timestamp without time zone) created_at,
+
+    CASE WHEN af.act_dep_date_time_lt ~ '^\s*(?:(?:(?#31 day begin)(?:0[1-9]|[12][0-9]|3[01])/(?:0[13578]|1[02])/\d\d(?#31 day end))|(?:(?#30 days begin)(?:0[1-9]|[12][0-9]|30)/(?:0[469]|11)/\d\d(?#30 days end ))|(?:(?#28 days begin)(?:0[1-9]|[1][0-9]|2[0-8])/02/\d\d(?#28 days end))|(?:(?#29 days begin)29/02/(?:(?:0[48]|[2468][048]|[0][48]|[1379][26])|(?:[02468][048]|[13579][26])00)(?#29 days end)))\s(?#time begin)(?:(?:[01][0-9]|2[0-3]):(?:[0-5][0-9]))(?#time end)\s*$'
+	THEN CAST(to_timestamp(af.act_dep_date_time_lt, 'DD/MM/YY HH24:MI') AS timestamp without time zone)
+	END act_dep_date_time_lt,
+
+    CASE WHEN af.schd_dep_only_date_lt ~ '^\s*(?:(?:(?#31 day begin)(?:0[1-9]|[12][0-9]|3[01])/(?:0[13578]|1[02])/\d\d(?#31 day end))|(?:(?#30 days begin)(?:0[1-9]|[12][0-9]|30)/(?:0[469]|11)/\d\d(?#30 days end ))|(?:(?#28 days begin)(?:0[1-9]|[1][0-9]|2[0-8])/02/\d\d(?#28 days end))|(?:(?#29 days begin)29/02/(?:(?:0[48]|[2468][048]|[0][48]|[1379][26])|(?:[02468][048]|[13579][26])00)(?#29 days end)))\s*$'
+	THEN CAST(to_timestamp(af.schd_dep_only_date_lt, 'DD/MM/YY') AS DATE)
+	ELSE (date '1970-01-01')
+	END schd_dep_only_date_lt,
+
+	CASE WHEN af.schd_dep_only_time_lt ~ '^\s*(?#time begin)(?:(?:[01][0-9]|2[0-3]):(?:[0-5][0-9]))(?#time end)\s*$'
+	THEN CAST(to_timestamp(af.schd_dep_only_time_lt, 'HH24:MI') AS TIME)
+	ELSE (time '00:00:00')
+	END schd_dep_only_time_lt,
+
+	CASE WHEN af.schd_dep_only_date_lt ~ '^\s*(?:(?:(?#31 day begin)(?:0[1-9]|[12][0-9]|3[01])/(?:0[13578]|1[02])/\d\d(?#31 day end))|(?:(?#30 days begin)(?:0[1-9]|[12][0-9]|30)/(?:0[469]|11)/\d\d(?#30 days end ))|(?:(?#28 days begin)(?:0[1-9]|[1][0-9]|2[0-8])/02/\d\d(?#28 days end))|(?:(?#29 days begin)29/02/(?:(?:0[48]|[2468][048]|[0][48]|[1379][26])|(?:[02468][048]|[13579][26])00)(?#29 days end)))\s*$'
+	      AND af.schd_dep_only_time_lt ~ '^\s*(?#time begin)(?:(?:[01][0-9]|2[0-3]):(?:[0-5][0-9]))(?#time end)\s*$'
+	THEN CAST(to_timestamp(af.schd_dep_only_date_lt, 'DD/MM/YY') AS DATE) + CAST(to_timestamp(af.schd_dep_only_time_lt, 'HH24:MI') AS TIME)
+	ELSE (date '1970-01-01')
+	END schd_dep_lt
+
+FROM aenaflight_2017_01 af
+ORDER BY af.id]]>
+    </entry>
+
+    <entry key="insertIntoAenaFlightTypedFromAenaFlightRawDeltaOnDBSide"><![CDATA[INSERT INTO aenaflight_2017_01_typed (
+        id,
+        act_arr_date_time_lt,
+        aircraft_name_scheduled,
+        arr_apt_name_es,
+        arr_apt_code_iata,
+        baggage_info,
+        carrier_airline_name_en,
+        carrier_icao_code,
+        carrier_number,
+        counter,
+        dep_apt_name_es,
+        dep_apt_code_iata,
+        est_arr_date_time_lt,
+        est_dep_date_time_lt,
+        flight_airline_name_en,
+        flight_airline_name,
+        flight_icao_code,
+        flight_number,
+        flt_leg_seq_no,
+        gate_info,
+        lounge_info,
+        schd_arr_only_date_lt,
+        schd_arr_only_time_lt,
+        schd_arr_lt,
+        source_data,
+        status_info,
+        terminal_info,
+        arr_terminal_info,
+        created_at,
+        act_dep_date_time_lt,
+        schd_dep_only_date_lt,
+        schd_dep_only_time_lt,
+        schd_dep_lt
+        )
+SELECT
+	af.id,
+
+	CASE WHEN af.act_arr_date_time_lt ~ '^\s*(?:(?:(?#31 day begin)(?:0[1-9]|[12][0-9]|3[01])/(?:0[13578]|1[02])/\d\d(?#31 day end))|(?:(?#30 days begin)(?:0[1-9]|[12][0-9]|30)/(?:0[469]|11)/\d\d(?#30 days end ))|(?:(?#28 days begin)(?:0[1-9]|[1][0-9]|2[0-8])/02/\d\d(?#28 days end))|(?:(?#29 days begin)29/02/(?:(?:0[48]|[2468][048]|[0][48]|[1379][26])|(?:[02468][048]|[13579][26])00)(?#29 days end)))\s(?#time begin)(?:(?:[01][0-9]|2[0-3]):(?:[0-5][0-9]))(?#time end)\s*$'
+	THEN CAST(to_timestamp(af.act_arr_date_time_lt, 'DD/MM/YY HH24:MI') AS timestamp without time zone)
+	END act_arr_date_time_lt,
+
+    af.aircraft_name_scheduled,
+    af.arr_apt_name_es,
+    COALESCE(af.arr_apt_code_iata, '') arr_apt_code_iata,
+    af.baggage_info,
+    af.carrier_airline_name_en,
+    af.carrier_icao_code,
+    af.carrier_number,
+	af.counter,
+    af.dep_apt_name_es,
+    COALESCE(af.dep_apt_code_iata, '') dep_apt_code_iata,
+
+    CASE WHEN af.est_arr_date_time_lt ~ '^\s*(?:(?:(?#31 day begin)(?:0[1-9]|[12][0-9]|3[01])/(?:0[13578]|1[02])/\d\d(?#31 day end))|(?:(?#30 days begin)(?:0[1-9]|[12][0-9]|30)/(?:0[469]|11)/\d\d(?#30 days end ))|(?:(?#28 days begin)(?:0[1-9]|[1][0-9]|2[0-8])/02/\d\d(?#28 days end))|(?:(?#29 days begin)29/02/(?:(?:0[48]|[2468][048]|[0][48]|[1379][26])|(?:[02468][048]|[13579][26])00)(?#29 days end)))\s(?#time begin)(?:(?:[01][0-9]|2[0-3]):(?:[0-5][0-9]))(?#time end)\s*$'
+	THEN CAST(to_timestamp(af.est_arr_date_time_lt, 'DD/MM/YY HH24:MI') AS timestamp without time zone)
+	END est_arr_date_time_lt,
+
+    CASE WHEN af.est_dep_date_time_lt ~ '^\s*(?:(?:(?#31 day begin)(?:0[1-9]|[12][0-9]|3[01])/(?:0[13578]|1[02])/\d\d(?#31 day end))|(?:(?#30 days begin)(?:0[1-9]|[12][0-9]|30)/(?:0[469]|11)/\d\d(?#30 days end ))|(?:(?#28 days begin)(?:0[1-9]|[1][0-9]|2[0-8])/02/\d\d(?#28 days end))|(?:(?#29 days begin)29/02/(?:(?:0[48]|[2468][048]|[0][48]|[1379][26])|(?:[02468][048]|[13579][26])00)(?#29 days end)))\s(?#time begin)(?:(?:[01][0-9]|2[0-3]):(?:[0-5][0-9]))(?#time end)\s*$'
+	THEN CAST(to_timestamp(af.est_dep_date_time_lt, 'DD/MM/YY HH24:MI') AS timestamp without time zone)
+	END est_dep_date_time_lt,
+
+    af.flight_airline_name_en,
+    af.flight_airline_name,
+    COALESCE(af.flight_icao_code) flight_icao_code,
+    COALESCE(af.flight_number, '') flight_number,
+
+    CASE WHEN af.flt_leg_seq_no ~ '^ *(?:[+-]?0*(?:(?#01)\d{1,9}|(?#02)1\d{9}|(?#03)20\d{8}|(?#04)21[0-3]\d{7}|(?#05)214[0-6]\d{6}|(?#06)2147[0-3]\d{5}|(?#07)21474[0-7]\d{4}|(?#08)214748[0-2]\d{3}|(?#09)2147483[0-5]\d{2}|(?#10)21474836[0-3]\d{1}|(?#11)214748364[0-7])|-0*2147483648) *$'
+	THEN CAST(af.flt_leg_seq_no AS INT)
+	END flt_leg_seq_no,
+
+	af.gate_info,
+    af.lounge_info,
+
+	CASE WHEN af.schd_arr_only_date_lt ~ '^\s*(?:(?:(?#31 day begin)(?:0[1-9]|[12][0-9]|3[01])/(?:0[13578]|1[02])/\d\d(?#31 day end))|(?:(?#30 days begin)(?:0[1-9]|[12][0-9]|30)/(?:0[469]|11)/\d\d(?#30 days end ))|(?:(?#28 days begin)(?:0[1-9]|[1][0-9]|2[0-8])/02/\d\d(?#28 days end))|(?:(?#29 days begin)29/02/(?:(?:0[48]|[2468][048]|[0][48]|[1379][26])|(?:[02468][048]|[13579][26])00)(?#29 days end)))\s*$'
+	THEN CAST(to_timestamp(af.schd_arr_only_date_lt, 'DD/MM/YY') AS DATE)
+	END schd_arr_only_date_lt,
+
+	CASE WHEN af.schd_arr_only_time_lt ~ '^\s*(?#time begin)(?:(?:[01][0-9]|2[0-3]):(?:[0-5][0-9]))(?#time end)\s*$'
+	THEN CAST(to_timestamp(af.schd_arr_only_time_lt, 'HH24:MI') AS TIME)
+	END schd_arr_only_time_lt,
+
+	CASE WHEN af.schd_arr_only_date_lt ~ '^\s*(?:(?:(?#31 day begin)(?:0[1-9]|[12][0-9]|3[01])/(?:0[13578]|1[02])/\d\d(?#31 day end))|(?:(?#30 days begin)(?:0[1-9]|[12][0-9]|30)/(?:0[469]|11)/\d\d(?#30 days end ))|(?:(?#28 days begin)(?:0[1-9]|[1][0-9]|2[0-8])/02/\d\d(?#28 days end))|(?:(?#29 days begin)29/02/(?:(?:0[48]|[2468][048]|[0][48]|[1379][26])|(?:[02468][048]|[13579][26])00)(?#29 days end)))\s*$'
+	      AND af.schd_arr_only_time_lt ~ '^\s*(?#time begin)(?:(?:[01][0-9]|2[0-3]):(?:[0-5][0-9]))(?#time end)\s*$'
+	THEN CAST(to_timestamp(af.schd_arr_only_date_lt, 'DD/MM/YY') AS DATE) + CAST(to_timestamp(af.schd_arr_only_time_lt, 'HH24:MI') AS TIME)
+	END schd_arr_lt,
+
+    af.source_data,
+    af.status_info,
+    af.terminal_info,
+    af.arr_terminal_info,
+    CAST(to_timestamp(af.created_at) AS timestamp without time zone) created_at,
+
+    CASE WHEN af.act_dep_date_time_lt ~ '^\s*(?:(?:(?#31 day begin)(?:0[1-9]|[12][0-9]|3[01])/(?:0[13578]|1[02])/\d\d(?#31 day end))|(?:(?#30 days begin)(?:0[1-9]|[12][0-9]|30)/(?:0[469]|11)/\d\d(?#30 days end ))|(?:(?#28 days begin)(?:0[1-9]|[1][0-9]|2[0-8])/02/\d\d(?#28 days end))|(?:(?#29 days begin)29/02/(?:(?:0[48]|[2468][048]|[0][48]|[1379][26])|(?:[02468][048]|[13579][26])00)(?#29 days end)))\s(?#time begin)(?:(?:[01][0-9]|2[0-3]):(?:[0-5][0-9]))(?#time end)\s*$'
+	THEN CAST(to_timestamp(af.act_dep_date_time_lt, 'DD/MM/YY HH24:MI') AS timestamp without time zone)
+	END act_dep_date_time_lt,
+
+    CASE WHEN af.schd_dep_only_date_lt ~ '^\s*(?:(?:(?#31 day begin)(?:0[1-9]|[12][0-9]|3[01])/(?:0[13578]|1[02])/\d\d(?#31 day end))|(?:(?#30 days begin)(?:0[1-9]|[12][0-9]|30)/(?:0[469]|11)/\d\d(?#30 days end ))|(?:(?#28 days begin)(?:0[1-9]|[1][0-9]|2[0-8])/02/\d\d(?#28 days end))|(?:(?#29 days begin)29/02/(?:(?:0[48]|[2468][048]|[0][48]|[1379][26])|(?:[02468][048]|[13579][26])00)(?#29 days end)))\s*$'
+	THEN CAST(to_timestamp(af.schd_dep_only_date_lt, 'DD/MM/YY') AS DATE)
+	ELSE (date '1970-01-01')
+	END schd_dep_only_date_lt,
+
+	CASE WHEN af.schd_dep_only_time_lt ~ '^\s*(?#time begin)(?:(?:[01][0-9]|2[0-3]):(?:[0-5][0-9]))(?#time end)\s*$'
+	THEN CAST(to_timestamp(af.schd_dep_only_time_lt, 'HH24:MI') AS TIME)
+	ELSE (time '00:00:00')
+	END schd_dep_only_time_lt,
+
+	CASE WHEN af.schd_dep_only_date_lt ~ '^\s*(?:(?:(?#31 day begin)(?:0[1-9]|[12][0-9]|3[01])/(?:0[13578]|1[02])/\d\d(?#31 day end))|(?:(?#30 days begin)(?:0[1-9]|[12][0-9]|30)/(?:0[469]|11)/\d\d(?#30 days end ))|(?:(?#28 days begin)(?:0[1-9]|[1][0-9]|2[0-8])/02/\d\d(?#28 days end))|(?:(?#29 days begin)29/02/(?:(?:0[48]|[2468][048]|[0][48]|[1379][26])|(?:[02468][048]|[13579][26])00)(?#29 days end)))\s*$'
+	      AND af.schd_dep_only_time_lt ~ '^\s*(?#time begin)(?:(?:[01][0-9]|2[0-3]):(?:[0-5][0-9]))(?#time end)\s*$'
+	THEN CAST(to_timestamp(af.schd_dep_only_date_lt, 'DD/MM/YY') AS DATE) + CAST(to_timestamp(af.schd_dep_only_time_lt, 'HH24:MI') AS TIME)
+	ELSE (date '1970-01-01')
+	END schd_dep_lt
+
+FROM aenaflight_2017_01 af
+WHERE af.id > (SELECT MAX(aft1.id) FROM aenaflight_2017_01_typed aft1) OR NOT EXISTS (SELECT 1 FROM aenaflight_2017_01_typed aft2)
+ORDER BY af.id
+LIMIT :limit]]>
+    </entry>
+
+    <entry key="insertIntoAenaFlightTypedFromAenaFlightRawSkeppedOnDBSide"><![CDATA[INSERT INTO aenaflight_2017_01_typed (
+        id,
+        act_arr_date_time_lt,
+        aircraft_name_scheduled,
+        arr_apt_name_es,
+        arr_apt_code_iata,
+        baggage_info,
+        carrier_airline_name_en,
+        carrier_icao_code,
+        carrier_number,
+        counter,
+        dep_apt_name_es,
+        dep_apt_code_iata,
+        est_arr_date_time_lt,
+        est_dep_date_time_lt,
+        flight_airline_name_en,
+        flight_airline_name,
+        flight_icao_code,
+        flight_number,
+        flt_leg_seq_no,
+        gate_info,
+        lounge_info,
+        schd_arr_only_date_lt,
+        schd_arr_only_time_lt,
+        schd_arr_lt,
+        source_data,
+        status_info,
+        terminal_info,
+        arr_terminal_info,
+        created_at,
+        act_dep_date_time_lt,
+        schd_dep_only_date_lt,
+        schd_dep_only_time_lt,
+        schd_dep_lt
+        )
+SELECT
+	af.id,
+
+	CASE WHEN af.act_arr_date_time_lt ~ '^\s*(?:(?:(?#31 day begin)(?:0[1-9]|[12][0-9]|3[01])/(?:0[13578]|1[02])/\d\d(?#31 day end))|(?:(?#30 days begin)(?:0[1-9]|[12][0-9]|30)/(?:0[469]|11)/\d\d(?#30 days end ))|(?:(?#28 days begin)(?:0[1-9]|[1][0-9]|2[0-8])/02/\d\d(?#28 days end))|(?:(?#29 days begin)29/02/(?:(?:0[48]|[2468][048]|[0][48]|[1379][26])|(?:[02468][048]|[13579][26])00)(?#29 days end)))\s(?#time begin)(?:(?:[01][0-9]|2[0-3]):(?:[0-5][0-9]))(?#time end)\s*$'
+	THEN CAST(to_timestamp(af.act_arr_date_time_lt, 'DD/MM/YY HH24:MI') AS timestamp without time zone)
+	END act_arr_date_time_lt,
+
+    af.aircraft_name_scheduled,
+    af.arr_apt_name_es,
+    COALESCE(af.arr_apt_code_iata, '') arr_apt_code_iata,
+    af.baggage_info,
+    af.carrier_airline_name_en,
+    af.carrier_icao_code,
+    af.carrier_number,
+	af.counter,
+    af.dep_apt_name_es,
+    COALESCE(af.dep_apt_code_iata, '') dep_apt_code_iata,
+
+    CASE WHEN af.est_arr_date_time_lt ~ '^\s*(?:(?:(?#31 day begin)(?:0[1-9]|[12][0-9]|3[01])/(?:0[13578]|1[02])/\d\d(?#31 day end))|(?:(?#30 days begin)(?:0[1-9]|[12][0-9]|30)/(?:0[469]|11)/\d\d(?#30 days end ))|(?:(?#28 days begin)(?:0[1-9]|[1][0-9]|2[0-8])/02/\d\d(?#28 days end))|(?:(?#29 days begin)29/02/(?:(?:0[48]|[2468][048]|[0][48]|[1379][26])|(?:[02468][048]|[13579][26])00)(?#29 days end)))\s(?#time begin)(?:(?:[01][0-9]|2[0-3]):(?:[0-5][0-9]))(?#time end)\s*$'
+	THEN CAST(to_timestamp(af.est_arr_date_time_lt, 'DD/MM/YY HH24:MI') AS timestamp without time zone)
+	END est_arr_date_time_lt,
+
+    CASE WHEN af.est_dep_date_time_lt ~ '^\s*(?:(?:(?#31 day begin)(?:0[1-9]|[12][0-9]|3[01])/(?:0[13578]|1[02])/\d\d(?#31 day end))|(?:(?#30 days begin)(?:0[1-9]|[12][0-9]|30)/(?:0[469]|11)/\d\d(?#30 days end ))|(?:(?#28 days begin)(?:0[1-9]|[1][0-9]|2[0-8])/02/\d\d(?#28 days end))|(?:(?#29 days begin)29/02/(?:(?:0[48]|[2468][048]|[0][48]|[1379][26])|(?:[02468][048]|[13579][26])00)(?#29 days end)))\s(?#time begin)(?:(?:[01][0-9]|2[0-3]):(?:[0-5][0-9]))(?#time end)\s*$'
+	THEN CAST(to_timestamp(af.est_dep_date_time_lt, 'DD/MM/YY HH24:MI') AS timestamp without time zone)
+	END est_dep_date_time_lt,
+
+    af.flight_airline_name_en,
+    af.flight_airline_name,
+    COALESCE(af.flight_icao_code) flight_icao_code,
+    COALESCE(af.flight_number, '') flight_number,
+
+    CASE WHEN af.flt_leg_seq_no ~ '^ *(?:[+-]?0*(?:(?#01)\d{1,9}|(?#02)1\d{9}|(?#03)20\d{8}|(?#04)21[0-3]\d{7}|(?#05)214[0-6]\d{6}|(?#06)2147[0-3]\d{5}|(?#07)21474[0-7]\d{4}|(?#08)214748[0-2]\d{3}|(?#09)2147483[0-5]\d{2}|(?#10)21474836[0-3]\d{1}|(?#11)214748364[0-7])|-0*2147483648) *$'
+	THEN CAST(af.flt_leg_seq_no AS INT)
+	END flt_leg_seq_no,
+
+	af.gate_info,
+    af.lounge_info,
+
+	CASE WHEN af.schd_arr_only_date_lt ~ '^\s*(?:(?:(?#31 day begin)(?:0[1-9]|[12][0-9]|3[01])/(?:0[13578]|1[02])/\d\d(?#31 day end))|(?:(?#30 days begin)(?:0[1-9]|[12][0-9]|30)/(?:0[469]|11)/\d\d(?#30 days end ))|(?:(?#28 days begin)(?:0[1-9]|[1][0-9]|2[0-8])/02/\d\d(?#28 days end))|(?:(?#29 days begin)29/02/(?:(?:0[48]|[2468][048]|[0][48]|[1379][26])|(?:[02468][048]|[13579][26])00)(?#29 days end)))\s*$'
+	THEN CAST(to_timestamp(af.schd_arr_only_date_lt, 'DD/MM/YY') AS DATE)
+	END schd_arr_only_date_lt,
+
+	CASE WHEN af.schd_arr_only_time_lt ~ '^\s*(?#time begin)(?:(?:[01][0-9]|2[0-3]):(?:[0-5][0-9]))(?#time end)\s*$'
+	THEN CAST(to_timestamp(af.schd_arr_only_time_lt, 'HH24:MI') AS TIME)
+	END schd_arr_only_time_lt,
+
+	CASE WHEN af.schd_arr_only_date_lt ~ '^\s*(?:(?:(?#31 day begin)(?:0[1-9]|[12][0-9]|3[01])/(?:0[13578]|1[02])/\d\d(?#31 day end))|(?:(?#30 days begin)(?:0[1-9]|[12][0-9]|30)/(?:0[469]|11)/\d\d(?#30 days end ))|(?:(?#28 days begin)(?:0[1-9]|[1][0-9]|2[0-8])/02/\d\d(?#28 days end))|(?:(?#29 days begin)29/02/(?:(?:0[48]|[2468][048]|[0][48]|[1379][26])|(?:[02468][048]|[13579][26])00)(?#29 days end)))\s*$'
+	      AND af.schd_arr_only_time_lt ~ '^\s*(?#time begin)(?:(?:[01][0-9]|2[0-3]):(?:[0-5][0-9]))(?#time end)\s*$'
+	THEN CAST(to_timestamp(af.schd_arr_only_date_lt, 'DD/MM/YY') AS DATE) + CAST(to_timestamp(af.schd_arr_only_time_lt, 'HH24:MI') AS TIME)
+	END schd_arr_lt,
+
+    af.source_data,
+    af.status_info,
+    af.terminal_info,
+    af.arr_terminal_info,
+    CAST(to_timestamp(af.created_at) AS timestamp without time zone) created_at,
+
+    CASE WHEN af.act_dep_date_time_lt ~ '^\s*(?:(?:(?#31 day begin)(?:0[1-9]|[12][0-9]|3[01])/(?:0[13578]|1[02])/\d\d(?#31 day end))|(?:(?#30 days begin)(?:0[1-9]|[12][0-9]|30)/(?:0[469]|11)/\d\d(?#30 days end ))|(?:(?#28 days begin)(?:0[1-9]|[1][0-9]|2[0-8])/02/\d\d(?#28 days end))|(?:(?#29 days begin)29/02/(?:(?:0[48]|[2468][048]|[0][48]|[1379][26])|(?:[02468][048]|[13579][26])00)(?#29 days end)))\s(?#time begin)(?:(?:[01][0-9]|2[0-3]):(?:[0-5][0-9]))(?#time end)\s*$'
+	THEN CAST(to_timestamp(af.act_dep_date_time_lt, 'DD/MM/YY HH24:MI') AS timestamp without time zone)
+	END act_dep_date_time_lt,
+
+    CASE WHEN af.schd_dep_only_date_lt ~ '^\s*(?:(?:(?#31 day begin)(?:0[1-9]|[12][0-9]|3[01])/(?:0[13578]|1[02])/\d\d(?#31 day end))|(?:(?#30 days begin)(?:0[1-9]|[12][0-9]|30)/(?:0[469]|11)/\d\d(?#30 days end ))|(?:(?#28 days begin)(?:0[1-9]|[1][0-9]|2[0-8])/02/\d\d(?#28 days end))|(?:(?#29 days begin)29/02/(?:(?:0[48]|[2468][048]|[0][48]|[1379][26])|(?:[02468][048]|[13579][26])00)(?#29 days end)))\s*$'
+	THEN CAST(to_timestamp(af.schd_dep_only_date_lt, 'DD/MM/YY') AS DATE)
+	ELSE (date '1970-01-01')
+	END schd_dep_only_date_lt,
+
+	CASE WHEN af.schd_dep_only_time_lt ~ '^\s*(?#time begin)(?:(?:[01][0-9]|2[0-3]):(?:[0-5][0-9]))(?#time end)\s*$'
+	THEN CAST(to_timestamp(af.schd_dep_only_time_lt, 'HH24:MI') AS TIME)
+	ELSE (time '00:00:00')
+	END schd_dep_only_time_lt,
+
+	CASE WHEN af.schd_dep_only_date_lt ~ '^\s*(?:(?:(?#31 day begin)(?:0[1-9]|[12][0-9]|3[01])/(?:0[13578]|1[02])/\d\d(?#31 day end))|(?:(?#30 days begin)(?:0[1-9]|[12][0-9]|30)/(?:0[469]|11)/\d\d(?#30 days end ))|(?:(?#28 days begin)(?:0[1-9]|[1][0-9]|2[0-8])/02/\d\d(?#28 days end))|(?:(?#29 days begin)29/02/(?:(?:0[48]|[2468][048]|[0][48]|[1379][26])|(?:[02468][048]|[13579][26])00)(?#29 days end)))\s*$'
+	      AND af.schd_dep_only_time_lt ~ '^\s*(?#time begin)(?:(?:[01][0-9]|2[0-3]):(?:[0-5][0-9]))(?#time end)\s*$'
+	THEN CAST(to_timestamp(af.schd_dep_only_date_lt, 'DD/MM/YY') AS DATE) + CAST(to_timestamp(af.schd_dep_only_time_lt, 'HH24:MI') AS TIME)
+	ELSE (date '1970-01-01')
+	END schd_dep_lt
+
+FROM aenaflight_2017_01 af
+LEFT JOIN aenaflight_2017_01_typed aft ON af.id = aft.id
+WHERE af.id < (SELECT MAX(aft1.id)
+               FROM aenaflight_2017_01_typed aft1
+              )
+  AND aft.id IS NULL
+ORDER BY af.id
+LIMIT :limit]]>
+    </entry>
+
+    <entry key="aenaFlightRawAndTypedMaxAreEquals"><![CDATA[SELECT CASE
+         WHEN (SELECT MAX(af.id) FROM aenaflight_2017_01 af) = (SELECT MAX(aft1.id) FROM aenaflight_2017_01_typed aft1)
+         THEN 1
+         ELSE 0
+       END]]>
+    </entry>
+
+    <entry key="agregateAenaFlightVariant01"><![CDATA[WITH step1 AS (
+SELECT id,
+       arr_apt_code_iata,
+       dep_apt_code_iata,
+       flight_icao_code,
+       flight_number,
+       schd_dep_only_date_lt,
+       schd_dep_only_time_lt,
+       CASE
+         WHEN TRIM(baggage_info) = '' THEN NULL
+         WHEN baggage_info = LAG(baggage_info, 1)
+                             OVER (PARTITION BY arr_apt_code_iata,
+                                                dep_apt_code_iata,
+                                                flight_icao_code,
+                                                flight_number,
+                                                schd_dep_only_date_lt,
+                                                schd_dep_only_time_lt
+                                   ORDER BY id DESC)
+         THEN NULL
+         ELSE baggage_info
+       END baggage_info,
+    CASE
+         WHEN TRIM(counter) = '' THEN NULL
+         WHEN counter = LAG(counter, 1)
+                             OVER (PARTITION BY arr_apt_code_iata,
+                                                dep_apt_code_iata,
+                                                flight_icao_code,
+                                                flight_number,
+                                                schd_dep_only_date_lt,
+                                                schd_dep_only_time_lt
+                                   ORDER BY id DESC)
+         THEN NULL
+         ELSE counter
+       END counter,
+    CASE
+         WHEN TRIM(gate_info) = '' THEN NULL
+         WHEN gate_info = LAG(gate_info, 1)
+                             OVER (PARTITION BY arr_apt_code_iata,
+                                                dep_apt_code_iata,
+                                                flight_icao_code,
+                                                flight_number,
+                                                schd_dep_only_date_lt,
+                                                schd_dep_only_time_lt
+                                   ORDER BY id DESC)
+         THEN NULL
+         ELSE gate_info
+       END gate_info,
+      CASE
+         WHEN TRIM(lounge_info) = '' THEN NULL
+         WHEN lounge_info = LAG(lounge_info, 1)
+                             OVER (PARTITION BY arr_apt_code_iata,
+                                                dep_apt_code_iata,
+                                                flight_icao_code,
+                                                flight_number,
+                                                schd_dep_only_date_lt,
+                                                schd_dep_only_time_lt
+                                   ORDER BY id DESC)
+         THEN NULL
+         ELSE lounge_info
+       END lounge_info,
+       CASE
+         WHEN TRIM(terminal_info) = '' THEN NULL
+         WHEN terminal_info = LAG(terminal_info, 1)
+                             OVER (PARTITION BY arr_apt_code_iata,
+                                                dep_apt_code_iata,
+                                                flight_icao_code,
+                                                flight_number,
+                                                schd_dep_only_date_lt,
+                                                schd_dep_only_time_lt
+                                   ORDER BY id DESC)
+         THEN NULL
+         ELSE terminal_info
+       END terminal_info,
+       CASE
+         WHEN TRIM(arr_terminal_info) = '' THEN NULL
+         WHEN arr_terminal_info = LAG(arr_terminal_info, 1)
+                             OVER (PARTITION BY arr_apt_code_iata,
+                                                dep_apt_code_iata,
+                                                flight_icao_code,
+                                                flight_number,
+                                                schd_dep_only_date_lt,
+                                                schd_dep_only_time_lt
+                                   ORDER BY id DESC)
+         THEN NULL
+         ELSE arr_terminal_info
+       END arr_terminal_info
+FROM aenaflight_2017_01_typed
+),
+step2 AS (
+SELECT MAX(id) id,
+       arr_apt_code_iata,
+       dep_apt_code_iata,
+       flight_icao_code,
+       flight_number,
+       schd_dep_only_date_lt,
+       schd_dep_only_time_lt,
+       ARRAY_TO_STRING(ARRAY_AGG(step1.baggage_info ORDER BY id DESC), ',') baggage_info,
+       ARRAY_TO_STRING(ARRAY_AGG(step1.counter ORDER BY id DESC), ',') counter,
+       ARRAY_TO_STRING(ARRAY_AGG(step1.gate_info ORDER BY id DESC), ',') gate_info,
+       ARRAY_TO_STRING(ARRAY_AGG(step1.lounge_info ORDER BY id DESC), ',') lounge_info,
+       ARRAY_TO_STRING(ARRAY_AGG(step1.terminal_info ORDER BY id DESC), ',') terminal_info,
+       ARRAY_TO_STRING(ARRAY_AGG(step1.arr_terminal_info ORDER BY id DESC), ',') arr_terminal_info
+FROM step1
+GROUP BY arr_apt_code_iata,
+         dep_apt_code_iata,
+         flight_icao_code,
+         flight_number,
+         schd_dep_only_date_lt,
+         schd_dep_only_time_lt
+)
+INSERT INTO destination_data (
+  id,
+  adep,
+  ades,
+  flight_code,
+  flight_number,
+  carrier_code,
+  carrier_number,
+  status_info,
+  schd_dep_lt,
+  schd_arr_lt,
+  est_dep_lt,
+  est_arr_lt,
+  act_dep_lt,
+  act_arr_lt,
+  flt_leg_seq_no,
+  aircraft_name_scheduled,
+  baggage_info,
+  counter,
+  gate_info,
+  lounge_info,
+  terminal_info,
+  arr_terminal_info,
+  source_data,
+  created_at
+)
+SELECT ft.id,
+       ft.dep_apt_code_iata,
+       ft.arr_apt_code_iata,
+       ft.flight_icao_code,
+       ft.flight_number,
+       ft.carrier_icao_code,
+       CASE WHEN ft.carrier_number IS NOT NULL
+       THEN ft.carrier_number
+       ELSE COALESCE(
+            (SELECT ft1.carrier_number
+             FROM aenaflight_2017_01_typed ft1
+             WHERE ft1.arr_apt_code_iata = ft.arr_apt_code_iata
+               AND ft1.dep_apt_code_iata = ft.dep_apt_code_iata
+               AND ft1.flight_icao_code = ft.flight_icao_code
+               AND ft1.flight_number = ft.flight_number
+               AND ft1.schd_dep_only_date_lt = ft.schd_dep_only_date_lt
+               AND ft1.schd_dep_only_time_lt = ft.schd_dep_only_time_lt
+               AND TRIM(ft1.carrier_number) <> ''
+             ORDER BY ft1.id DESC
+             LIMIT 1
+            ),
+            '')
+       END,
+       CASE WHEN ft.status_info IS NOT NULL
+       THEN ft.status_info
+       ELSE COALESCE(
+            (SELECT ft1.status_info
+             FROM aenaflight_2017_01_typed ft1
+             WHERE ft1.arr_apt_code_iata = ft.arr_apt_code_iata
+               AND ft1.dep_apt_code_iata = ft.dep_apt_code_iata
+               AND ft1.flight_icao_code = ft.flight_icao_code
+               AND ft1.flight_number = ft.flight_number
+               AND ft1.schd_dep_only_date_lt = ft.schd_dep_only_date_lt
+               AND ft1.schd_dep_only_time_lt = ft.schd_dep_only_time_lt
+               AND TRIM(ft1.status_info) <> ''
+             ORDER BY ft1.id DESC
+             LIMIT 1
+            ),
+            '')
+       END,
+       CASE WHEN ft.schd_dep_lt IS NOT NULL
+       THEN ft.schd_dep_lt
+       ELSE COALESCE(
+            (SELECT ft1.schd_dep_lt
+             FROM aenaflight_2017_01_typed ft1
+             WHERE ft1.arr_apt_code_iata = ft.arr_apt_code_iata
+               AND ft1.dep_apt_code_iata = ft.dep_apt_code_iata
+               AND ft1.flight_icao_code = ft.flight_icao_code
+               AND ft1.flight_number = ft.flight_number
+               AND ft1.schd_dep_only_date_lt = ft.schd_dep_only_date_lt
+               AND ft1.schd_dep_only_time_lt = ft.schd_dep_only_time_lt
+               AND ft1.schd_dep_lt IS NOT NULL
+             ORDER BY ft1.id DESC
+             LIMIT 1
+            ),
+            ( date '1970/01/01'))
+       END,
+       CASE WHEN ft.schd_arr_lt IS NOT NULL
+       THEN ft.schd_arr_lt
+       ELSE COALESCE(
+            (SELECT ft1.schd_arr_lt
+             FROM aenaflight_2017_01_typed ft1
+             WHERE ft1.arr_apt_code_iata = ft.arr_apt_code_iata
+               AND ft1.dep_apt_code_iata = ft.dep_apt_code_iata
+               AND ft1.flight_icao_code = ft.flight_icao_code
+               AND ft1.flight_number = ft.flight_number
+               AND ft1.schd_dep_only_date_lt = ft.schd_dep_only_date_lt
+               AND ft1.schd_dep_only_time_lt = ft.schd_dep_only_time_lt
+               AND ft1.schd_arr_lt IS NOT NULL
+             ORDER BY ft1.id DESC
+             LIMIT 1
+            ),
+            ( date '1970/01/01'))
+       END,
+       CASE WHEN ft.est_dep_date_time_lt IS NOT NULL
+       THEN ft.est_dep_date_time_lt
+       ELSE COALESCE(
+            (SELECT ft1.est_dep_date_time_lt
+             FROM aenaflight_2017_01_typed ft1
+             WHERE ft1.arr_apt_code_iata = ft.arr_apt_code_iata
+               AND ft1.dep_apt_code_iata = ft.dep_apt_code_iata
+               AND ft1.flight_icao_code = ft.flight_icao_code
+               AND ft1.flight_number = ft.flight_number
+               AND ft1.schd_dep_only_date_lt = ft.schd_dep_only_date_lt
+               AND ft1.schd_dep_only_time_lt = ft.schd_dep_only_time_lt
+               AND ft1.est_dep_date_time_lt IS NOT NULL
+             ORDER BY ft1.id DESC
+             LIMIT 1
+            ),
+            ( date '1970/01/01'))
+       END,
+       CASE WHEN ft.est_arr_date_time_lt IS NOT NULL
+       THEN ft.est_arr_date_time_lt
+       ELSE COALESCE(
+            (SELECT ft1.est_arr_date_time_lt
+             FROM aenaflight_2017_01_typed ft1
+             WHERE ft1.arr_apt_code_iata = ft.arr_apt_code_iata
+               AND ft1.dep_apt_code_iata = ft.dep_apt_code_iata
+               AND ft1.flight_icao_code = ft.flight_icao_code
+               AND ft1.flight_number = ft.flight_number
+               AND ft1.schd_dep_only_date_lt = ft.schd_dep_only_date_lt
+               AND ft1.schd_dep_only_time_lt = ft.schd_dep_only_time_lt
+               AND ft1.est_arr_date_time_lt IS NOT NULL
+             ORDER BY ft1.id DESC
+             LIMIT 1
+            ),
+            ( date '1970/01/01'))
+       END,
+       CASE WHEN ft.act_dep_date_time_lt IS NOT NULL
+       THEN ft.act_dep_date_time_lt
+       ELSE COALESCE(
+            (SELECT ft1.act_dep_date_time_lt
+             FROM aenaflight_2017_01_typed ft1
+             WHERE ft1.arr_apt_code_iata = ft.arr_apt_code_iata
+               AND ft1.dep_apt_code_iata = ft.dep_apt_code_iata
+               AND ft1.flight_icao_code = ft.flight_icao_code
+               AND ft1.flight_number = ft.flight_number
+               AND ft1.schd_dep_only_date_lt = ft.schd_dep_only_date_lt
+               AND ft1.schd_dep_only_time_lt = ft.schd_dep_only_time_lt
+               AND ft1.act_dep_date_time_lt IS NOT NULL
+             ORDER BY ft1.id DESC
+             LIMIT 1
+            ),
+            ( date '1970/01/01'))
+       END,
+       CASE WHEN ft.act_arr_date_time_lt IS NOT NULL
+       THEN ft.act_arr_date_time_lt
+       ELSE COALESCE(
+            (SELECT ft1.act_arr_date_time_lt
+             FROM aenaflight_2017_01_typed ft1
+             WHERE ft1.arr_apt_code_iata = ft.arr_apt_code_iata
+               AND ft1.dep_apt_code_iata = ft.dep_apt_code_iata
+               AND ft1.flight_icao_code = ft.flight_icao_code
+               AND ft1.flight_number = ft.flight_number
+               AND ft1.schd_dep_only_date_lt = ft.schd_dep_only_date_lt
+               AND ft1.schd_dep_only_time_lt = ft.schd_dep_only_time_lt
+               AND ft1.act_arr_date_time_lt IS NOT NULL
+             ORDER BY ft1.id DESC
+             LIMIT 1
+            ),
+            ( date '1970/01/01'))
+       END,
+       CASE WHEN ft.flt_leg_seq_no IS NOT NULL
+       THEN ft.flt_leg_seq_no
+       ELSE COALESCE(
+            (SELECT ft1.flt_leg_seq_no
+             FROM aenaflight_2017_01_typed ft1
+             WHERE ft1.arr_apt_code_iata = ft.arr_apt_code_iata
+               AND ft1.dep_apt_code_iata = ft.dep_apt_code_iata
+               AND ft1.flight_icao_code = ft.flight_icao_code
+               AND ft1.flight_number = ft.flight_number
+               AND ft1.schd_dep_only_date_lt = ft.schd_dep_only_date_lt
+               AND ft1.schd_dep_only_time_lt = ft.schd_dep_only_time_lt
+               AND ft1.flt_leg_seq_no IS NOT NULL
+             ORDER BY ft1.id DESC
+             LIMIT 1
+            ),
+            -1)
+       END,
+       CASE WHEN ft.aircraft_name_scheduled IS NOT NULL
+       THEN ft.aircraft_name_scheduled
+       ELSE COALESCE(
+            (SELECT ft1.aircraft_name_scheduled
+             FROM aenaflight_2017_01_typed ft1
+             WHERE ft1.arr_apt_code_iata = ft.arr_apt_code_iata
+               AND ft1.dep_apt_code_iata = ft.dep_apt_code_iata
+               AND ft1.flight_icao_code = ft.flight_icao_code
+               AND ft1.flight_number = ft.flight_number
+               AND ft1.schd_dep_only_date_lt = ft.schd_dep_only_date_lt
+               AND ft1.schd_dep_only_time_lt = ft.schd_dep_only_time_lt
+               AND ft1.aircraft_name_scheduled IS NOT NULL
+             ORDER BY ft1.id DESC
+             LIMIT 1
+            ),
+            '')
+       END,
+       step2.baggage_info,
+       step2.counter,
+       step2.gate_info,
+       step2.lounge_info,
+       step2.terminal_info,
+       step2.arr_terminal_info,
+       CASE WHEN ft.source_data IS NOT NULL
+       THEN ft.source_data
+       ELSE COALESCE(
+            (SELECT ft1.source_data
+             FROM aenaflight_2017_01_typed ft1
+             WHERE ft1.arr_apt_code_iata = ft.arr_apt_code_iata
+               AND ft1.dep_apt_code_iata = ft.dep_apt_code_iata
+               AND ft1.flight_icao_code = ft.flight_icao_code
+               AND ft1.flight_number = ft.flight_number
+               AND ft1.schd_dep_only_date_lt = ft.schd_dep_only_date_lt
+               AND ft1.schd_dep_only_time_lt = ft.schd_dep_only_time_lt
+               AND ft1.source_data IS NOT NULL
+             ORDER BY ft1.id DESC
+             LIMIT 1
+            ),
+            '')
+       END,
+       ft.created_at
+FROM step2
+JOIN aenaflight_2017_01_typed ft ON step2.id = ft.id]]>
+    </entry>
+
+    <entry key="truncateAenaFlightTyped"><![CDATA[TRUNCATE TABLE aenaflight_2017_01_typed]]></entry>
+    <entry key="truncateDestinationData"><![CDATA[TRUNCATE TABLE destination_data]]></entry>
+
+</properties>
