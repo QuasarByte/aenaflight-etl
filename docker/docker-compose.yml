@@ -1,0 +1,19 @@
+version: '2.3'
+services:
+    postgresqldb:
+        image: postgres:10.3
+        container_name: pf-gmbh-postgres-10-3
+        restart: always
+        ports:
+            - "5433:5432"
+        volumes:
+            - "pf-gmbh-postgres-10-3:/var/lib/postgresql/data"
+            - "./var/lib/pf-gmbh:/var/lib/pf-gmbh"
+        mem_limit: 8gb
+        memswap_limit: 16gb
+        mem_reservation: 512m
+        stdin_open: true
+        tty: true
+volumes:
+    pf-gmbh-postgres-10-3:
+        external: true

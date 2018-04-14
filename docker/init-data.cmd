@@ -1,0 +1,1 @@
+docker-compose exec postgresqldb "/var/lib/pf-gmbh/load-data.sh"
